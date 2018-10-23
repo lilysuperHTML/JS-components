@@ -103,7 +103,7 @@
       // 标记目前选中第几项
       this.curIndex = initData ? ar.findIndex(v => v === initData) : 0;
       
-      this.init(ar, initData, true);
+      this.init(ar);
       this.domInit(ar);
     };
     init(ar) {
@@ -307,7 +307,6 @@
       this.eventInit();
     };
     eventInit() {
-      this.value = ['上午', '00', '01'];
       this.l1.on('select', (val) => {
         this.value[0] = val;
         this.emit('select', this.value);
