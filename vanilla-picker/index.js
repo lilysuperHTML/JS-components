@@ -73,6 +73,7 @@
           this._events[type].push(callback);
         }
       }
+      this.emit('addEvent', type);
     };
     emit(type, ...args) {
       const handles = this._events[type];
@@ -217,6 +218,9 @@
       this.month = new _list(getMonths(), defaultMonth);
       this.day = new _list(getDays(defaultYear, defaultMonth), defaultDay);
       this.eventInit();
+      this.on('addEvent', () => {
+        this.emit('select', this.value);
+      });
     };
     // 生成DOM 插入年月日的选择器
     domInit() {
@@ -274,7 +278,7 @@
         // 如果选择的日期不存在 需要重置为新月份最后一天
         if (day.curIndex >= l) {
           // 回退到最后一天
-          day.curIndex = day.curIndex - (_l - l);
+          day.curIndex = l - 1;
           day.init(ar);
           // 往回退时间不需要动画 并且返回标记 不然会emit两次
           day.sec = 0;
@@ -305,6 +309,9 @@
       this.node.className = 'picker-container';
       this.node.append(this.l1.node, this.l2.node, this.l3.node);
       this.eventInit();
+      this.on('addEvent', () => {
+        this.emit('select', this.value);
+      });
     };
     eventInit() {
       this.l1.on('select', (val) => {
