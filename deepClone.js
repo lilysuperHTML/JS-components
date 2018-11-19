@@ -1,22 +1,23 @@
-const deepClone = (() => {
+const deepClone = (o) => {
   let path = new WeakMap();
+  path.set(o, 'this');
   let path_ar = ['this'];
-  let init = false;
-  return function(o) {
-    if (!init) {
-      path.set(o, 'this');
-      init = true;
-    }
+  return (function inner(o) {
     let result = {};
     Object.keys(o).forEach(v => {
       let value = o[v];
       path_ar.push(v);
       if(value && typeof value === 'object') {
         if (path.has(value)) {
-          result[v] = path.get(value);
+          let dupi_path = path.get(value).split('.').slice(1);
+          let origin = result;
+          dupi_path.forEach(v => {
+            origin = origin[v];
+          });
+          result[v] = origin;
         } else {
           path.set(value, path_ar.join('.'));
-          result[v] = deepClone(value);
+          result[v] = inner(value);
         }
       } else {
         result[v] = value;
@@ -24,5 +25,5 @@ const deepClone = (() => {
       path_ar.pop();
     });
     return result;
-  }
-})();
+  })(o);
+};
